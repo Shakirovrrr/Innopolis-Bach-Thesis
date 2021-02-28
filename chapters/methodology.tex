@@ -72,28 +72,94 @@ P_{Render} = \frac{LOD}{100}
 
 The first approach is to generate different levels of detail for each chunk so it will be possible to show fewer points for chunks that are far enough not to notice the low-detailed chunk.
 
+\newpage
 
 \section{Method 2: Creating a Mesh}
 \label{sec:creating_mesh}
 
+Mesh is a data structure that contains vertices, texture data, normals, and other details [citation here]. Later, the mesh renderer combines the mesh data and draws it on the scene.
+
+
+\subsection{Vertex grid}
+\label{subsec:vertex_grid}
+
+Meshes consist of vertices. We first create a set of vertices that later will form the mesh.
+
+First, the algorithm generates a flat grid of vertices. It is a square-bounded grid-aligned region that has a specified side length. It has $length \times length$ dimensions. Each point at this plane has a height value initially set to zero.
+
+<Visualization here>
+
+
+\subsection{Occurrence map}
+\label{subsec:occurrence_map}
+
+To determine where the mesh triangles should appear, the algorithm fills the occurrence map. The \textbf{occurrence map} tracks the appearance of points within the specified grid cells. It has the same size as the vertex grid. All map values are initially set to false. It means that no points have been noticed here yet.
+
+The algorithm maps each point within a chunk to a specific occurrence map cell.
+
 \begin{figure}[ht]
     \centering
     
-    \begin{subfigure}[t]{0.4\textwidth}
-        \includegraphics[width=\textwidth]{figs/implementation/point-cloud-plot.pdf}
+    \begin{subfigure}[t]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{methodology/point-cloud-plot.pdf}
         \caption{Example of point cloud data in two dimensions.}
     \end{subfigure}
     % side-to-side
-    \begin{subfigure}[t]{0.4\textwidth}
-        \includegraphics[width=\textwidth]{figs/implementation/occurrence-grid.pdf}
+    \begin{subfigure}[t]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{methodology/occurrence-grid.pdf}
         \caption{Occurrence grid.}
     \end{subfigure}
     
-    \begin{subfigure}[t]{0.5\textwidth}
-        \includegraphics[width=\textwidth]{figs/implementation/occurrence-map-applied.pdf}
+    \begin{subfigure}[t]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{methodology/occurrence-map-applied.pdf}
         \caption{Applied occurrence map.}
     \end{subfigure}
     
     \caption{Applying occurrence map.}
     \label{fig:occurrence_map}
 \end{figure}
+
+The occurrence map represents a strictly aligned version of the point cloud viewed from above.
+
+
+\subsection{Calculating cell coordinate}
+\label{subsec:calculating_cell_coordinate}
+
+To work with grid, the algorithm should calculate a cell coordinate for each point.
+
+To calculate a coordinate, it should do the following:
+\begin{enumerate}
+    \item Calculate the local coordinate within chunk.
+    \item Divide the local coordinate by cell size.
+    \item Truncate the result down.
+\end{enumerate}
+
+See the formula \ref{formula:cell_coordinate}.
+
+\begin{equation}
+\label{formula:cell_coordinate}
+Cell coordinate(p) = \left \lfloor \frac{Pos(p) - chunk origin}{cell size} \right \rfloor
+\end{equation}
+
+
+\subsection{Traversing points}
+\label{subsec:traversing_points}
+
+After initializing the vertex grid and occurrence map, the algorithm starts processing the point cloud itself.
+For each point in a point cloud, we calculate its grid cell coordinate and fill the corresponding cell in the vertex grid and occurrence map.
+
+At the vertex grid, the algorithm compares the height value stored in the cell and the height of the point (its Y coordinate). If the value stored in the grid is less than the point height, the algorithm writes the point height to the grid cell.
+
+At the occurrence map, the algorithm tracks the occurrence of the points in the grid cells. If a point belongs to the cell, that cell is marked as visited.
+
+\begin{algorithm}
+    \For{point \textup{p} in \textup{points}}{
+        x, y, z = $CellCoords(p.Position)$
+        
+        \If{vertices[x,z].y < y}{
+            vertices[x,z].y = y
+        }
+        
+        occurrenceMap[x, z] $\gets$ \textbf{true}
+    }
+\end{algorithm}
