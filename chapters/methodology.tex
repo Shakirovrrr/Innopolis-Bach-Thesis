@@ -4,7 +4,7 @@
 \section{Point Cloud Data}
 \label{sec:point_cloud_data}
 
-This project aims to work with large amounts of point cloud data. It contains arrays of three-dimensional coordinates and the four-component color data. The color information does not affect performance strongly. However, the massive number of points itself introduces the heavy load on processor resources. For improving the performance of visualization software, this work proposes two methods: Generating Levels of Detail (LODs) and Creating a heightmap.
+This project aims to work with large amounts of point cloud data. It contains arrays of three-dimensional coordinates and the four-component color data. The color information does not affect performance strongly. However, the massive number of points itself introduces the heavy load on computer resources. For improving the performance of visualization software, this work proposes two methods: Generating Levels of Detail (LODs) and Creating a heightmap.
 
 
 \section{Data Preprocessing}
@@ -77,7 +77,15 @@ The first approach is to generate different levels of detail for each chunk so i
 \section{Method 2: Creating a Mesh}
 \label{sec:creating_mesh}
 
-Mesh is a data structure that contains vertices, texture data, normals, and other details [citation here]. Later, the mesh renderer combines the mesh data and draws it on the scene.
+Mesh is a data structure that contains vertices, texture data, normals, and other details [citation here]. Later, the engine  combines the mesh data and draws it on the scene.
+
+Mesh creation consists of several stages:
+
+\begin{enumerate}
+    \item Map the point cloud into grid.
+    \item Generate triangles.
+    \item Fill the mesh.
+\end{enumerate}
 
 
 \subsection{Vertex grid}
@@ -87,11 +95,18 @@ Meshes consist of vertices. We first create a set of vertices that later will fo
 
 First, the algorithm generates a flat grid of vertices. It is a square-bounded grid-aligned region that has a specified side length. It has $length \times length$ dimensions. Each point at this plane has a height value initially set to zero.
 
-<Visualization here>
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.3\textwidth]{methodology/vertex-grid.pdf}
+    \caption{Vertex grid}
+    \label{fig:vertex_grid}
+\end{figure}
 
 
-\subsection{Occurrence map}
-\label{subsec:occurrence_map}
+\subsection{Mapping the point cloud into grid}
+\label{subsec:map_to_grid}
+
+\subsubsection{Occurrence map}
 
 To determine where the mesh triangles should appear, the algorithm fills the occurrence map. The \textbf{occurrence map} tracks the appearance of points within the specified grid cells. It has the same size as the vertex grid. All map values are initially set to false. It means that no points have been noticed here yet.
 
@@ -122,12 +137,11 @@ The algorithm maps each point within a chunk to a specific occurrence map cell.
 The occurrence map represents a strictly aligned version of the point cloud viewed from above.
 
 
-\subsection{Calculating cell coordinate}
-\label{subsec:calculating_cell_coordinate}
+\subsubsection{Calculating cell indices}
 
-To work with grid, the algorithm should calculate a cell coordinate for each point.
+To work with grid, the algorithm should calculate a cell index for each point.
 
-To calculate a coordinate, it should do the following:
+To calculate an index, it should do the following:
 \begin{enumerate}
     \item Calculate the local coordinate within chunk.
     \item Divide the local coordinate by cell size.
@@ -142,24 +156,53 @@ Cell coordinate(p) = \left \lfloor \frac{Pos(p) - chunk origin}{cell size} \righ
 \end{equation}
 
 
-\subsection{Traversing points}
-\label{subsec:traversing_points}
+\subsection{Traversing points and emitting new vertices}
+\label{subsec:emitting_vertices}
 
 After initializing the vertex grid and occurrence map, the algorithm starts processing the point cloud itself.
-For each point in a point cloud, we calculate its grid cell coordinate and fill the corresponding cell in the vertex grid and occurrence map.
+
+For each point in a point cloud, the algorithm  calculates its grid cell index and fills the corresponding cell in the vertex grid and occurrence map.
 
 At the vertex grid, the algorithm compares the height value stored in the cell and the height of the point (its Y coordinate). If the value stored in the grid is less than the point height, the algorithm writes the point height to the grid cell.
 
 At the occurrence map, the algorithm tracks the occurrence of the points in the grid cells. If a point belongs to the cell, that cell is marked as visited.
 
+
 \begin{algorithm}
     \For{point \textup{p} in \textup{points}}{
-        x, y, z = $CellCoords(p.Position)$
+        x, y, z $\gets CellCoords(p.Position)$\;
         
         \If{vertices[x,z].y < y}{
-            vertices[x,z].y = y
+            vertices[x,z].y = y\;
         }
         
-        occurrenceMap[x, z] $\gets$ \textbf{true}
+        occurrenceMap[x, z] $\gets$ \textbf{true}\;
     }
 \end{algorithm}
+
+
+\subsection{Generating triangles}
+\label{subsec:generating_triangles}
+
+After finishing building the vertex grid, it is necessary to combine vertices into triangles that are going to form the mesh. To achieve this, the algorithm uses the vertex grid and the occurrence map from the previous step.
+
+The algorithm traverses the vertex grid. The main goal is to connect three adjacent points in the grid into a triangle.
+
+The vertex grid is represented as a two-dimensional array. On each iteration, the algorithm checks each possible triangle appearance. If a triangle exists, its vertices are recorded.
+
+To check whether it is possible to create a triangle, the algorithm checks two adjacent points on the occurrence map. At the point $(X, Y)$, it checks whether $\left \langle (X, Y), (X+1, Y) (X, Y+1) \right \rangle$ and $\left \langle (X+1, Y), (X, Y+1), (X+1, Y+1) \right \rangle$ appear on the occurrence map. If they do, the corresponding triangles are recorded.
+
+\begin{algorithm}
+    \For{\textup{x} in 1..\textup{width}}{
+        \For{\textup{y} in 1..\textup{width}}{
+            \If{occuranceMap[x, y] and occuranceMap[x+1, y] and occuranceMap[x, y+1]}{
+                recordTriangle(x, y, x+1, y, x, y+1)\;
+            }
+            \If{occuranceMap[x+1, y] and occuranceMap[x, y+1] and occuranceMap[x+1, y+1]}{
+                recordTriangle(x+1, y, x, y+1, x+1, y+1)\;
+            }
+        }
+    }
+\end{algorithm}
+
+<Illustration here>
