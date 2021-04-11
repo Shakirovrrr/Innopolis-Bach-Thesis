@@ -97,6 +97,18 @@ stride(LOD) = \frac{100}{LOD}
     \label{fig:stride}
 \end{figure}
 
+\begin{algorithm}
+    \caption{Picking points with stride.}
+    
+    int i $\gets$ 0\;
+    Point[$\;$] newPoints $\gets$ [$\;$]\;
+    \For{p in points}{
+        \If{i \% stride == 0}{
+            newPoints.add(p)\;
+        }
+    }
+\end{algorithm}
+
 Different levels of detail are pregenerated for each chunk. The algorithm generates distinct assets \footnote{Asset is an item that can be used within an application (3D model, picture, audio, code, etc.).} for each requested LOD.
 
 When visualization is in progress, the LOD for each chunk is selected based on the distance between the viewer and the chunk. A user predefines the distances and corresponding LODs. The distance between two objects can be computed using the Pythagorean theorem (\autoref{eqn:pythagorean_3d}) as the coordinates are available for all objects.
@@ -203,6 +215,8 @@ At the occurrence map, the algorithm tracks the occurrence of the points in the 
 
 
 \begin{algorithm}
+    \caption{Filling the vertex grid and occurrence map.}
+
     \For{point \textup{p} in \textup{points}}{
         x, y, z $\gets CellCoords(p.Position)$\;
         
@@ -250,6 +264,8 @@ To check whether it is possible to create a triangle, the algorithm checks two a
 \end{figure}
 
 \begin{algorithm}
+    \caption{Generating triangles using occurrence map.}
+
     \For{\textup{x} in 1..\textup{width}}{
         \For{\textup{y} in 1..\textup{width}}{
             \If{occuranceMap[x, y] and occuranceMap[x+1, y] and occuranceMap[x, y+1]}{
