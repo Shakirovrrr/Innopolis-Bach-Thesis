@@ -2,6 +2,8 @@
 \documentclass[oneside,final,14pt,a4paper]{extreport}
 \usepackage[T2A]{fontenc}
 
+\usepackage{microtype}
+
 \usepackage{vmargin}
 \setpapersize{A4}
 \setmarginsrb{2.5cm}{2cm}{2cm}{2cm}{0pt}{10mm}{0pt}{13mm}
@@ -99,6 +101,7 @@
 \lhead[\fancyplain{}{\bf\thepage}]%
       {\fancyplain{}{\bf\rightmark}}
 \cfoot{} %bfseries
+\setlength{\headheight}{17pt}
 
 
 \newcommand{\dedication}[1]
@@ -106,8 +109,6 @@
      
    \begin{flushleft}\raggedleft #1\end{flushleft}
 }
-
-% -----------------------
 
 \begin{document}
 
@@ -118,6 +119,7 @@
 
 
 \newpage
+% \include{chapters/abstract}
 % Depend on above part
 \setcounter{page}{6}
 \include{chapters/methodology}
@@ -126,6 +128,4 @@
 %% REFERENCES
 \printbibliography[heading=bibintoc,title={Bibliography cited}]
 \include{chapters/appex}
-
-
 \end{document}
