@@ -6,22 +6,23 @@
 \section{Point Cloud Data}
 \label{sec:point_cloud_data}
 
-This project aims to work with large amounts of point cloud data. It contains arrays of three-dimensional coordinates and the four-component color data. The color information does not affect performance strongly. However, the massive number of points itself introduces the heavy load on computer resources. For improving the performance of visualization software, this work proposes two methods: Generating Levels of Detail (LODs) and Creating a heightmap.
+This project aims to work with large amounts of point cloud data. They contain arrays of three-dimensional coordinates and four-component color data. The color information does not affect performance strongly. However, the massive number of points itself introduces a heavy load on computer resources. For improving the performance of visualization software, this work proposes two methods: Generating Levels of Detail (LODs) and Creating a mesh.
 
 
 \section{Data Preprocessing}
 \label{sec:data_preprocessing}
 
-The data itself is stored in a PCAP file as captured packet stream from the lidar. It is necessary to preprocess original files before working on the point cloud. The preprocessing involves three main steps: converting the file from PCAP format to the LAS format, importing the LAS file into Unity, and splitting the point cloud data into chunks.
+The data themself is stored in a PCAP file as captured packet stream from the lidar. It is necessary to preprocess original files before working on the point cloud. The preprocessing involves three main steps: converting the file from PCAP format to the LAS format, importing the LAS file into Unity, and splitting the point cloud data into chunks.
+
+Converting the PCAP files to the LAS format and importing them into Unity are covered in Implementation chapter.
 
 \subsection{Splitting into chunks}
 
-For the proposed methods it is crucial to split the point cloud into smaller units (chunks) that are easier to process. It also helps to process the data in a parallel manner, thereby making the algorithms more scalable in terms of performance.
+For the proposed methods, it is crucial to split the point cloud into smaller units (chunks) that are easier to process. It also helps to process the data in a parallel manner, thereby making the algorithms more scalable in terms of performance.
 
-In terms of the given project, the chunk is a space bounded by computed borders. It has a position, and a size, which is the same for its width, height, and depth. 
+In terms of the given project, the chunk is a space bounded by the computed borders. It has a position and a size, both of which  are the same for its width, height, and depth.
 
-\paragraph{Algorithm}
-At the start, the algorithm computes the number of chunks in three dimensions using the formula \ref{eqn:n_chunks}. It uses the predefined chunk size and the boundaries of the point cloud object.
+As a part of this project, we developed an algorithm for splitting the data into chunks. At the start, the algorithm computes the number of chunks in three dimensions using the \autoref{eqn:n_chunks}. It uses the predefined chunk size and the boundaries of the point cloud object.
 
 The number of chunks for an axis $\alpha$ is computed as follows:
 
@@ -30,27 +31,25 @@ The number of chunks for an axis $\alpha$ is computed as follows:
 N_{chunks}^\alpha = \lceil BBox_{max}^\alpha - BBox_{min}^\alpha \rceil / Size_{chunk}
 \end{equation}
 
-For that, the chunk grid will have the size of $N_{chunks}^X \times N_{chunks}^Y \times N_{chunks}^Z$.
-
-The chunks are stored in a three-dimensional array. It means that each chunk has its corresponding index.
+The chunk grid has the size of $N_{chunks}^X \times N_{chunks}^Y \times N_{chunks}^Z$. The chunks are stored in a three-dimensional array. It means that each chunk has its corresponding index.
 
 After that, the algorithm iterates overall points and computes the exact chunk index they correspond to, based on their global position.
 
-The chunk index for a point with position $pos$ on an axis $\alpha$ is computed as shown on formula \ref{eqn:point_index}:
+The chunk index for a point with position $pos$ on an axis $\alpha$ is computed as shown in formula \ref{eqn:point_index}:
 
 \begin{equation}
 \label{eqn:point_index}
 Index_{pos}^\alpha = \left \lfloor \frac{pos^{\alpha} - BBox_{min}^\alpha}{Size_{chunk}} \right \rfloor
 \end{equation}
 
-In the end, the points are stored within chunks. It is now possible to read the point cloud data in chunks.
+In the end, the points are stored within the chunks. It is now possible to read the point cloud data in the chunks.
 
 
 \section{Method 1: Generating LODs}
 \label{sec:generating_lods}
 
 The level of detail defines the complexity of the model [citation here]. For this project, the level of detail adjusts the number of points shown for a particular object.
-The LOD of $L$ shows $L\%$ of all points of an object. For example, a chunk with LOD 100 contains all its points while a chunk with LOD 75 has $75\%$ of its points.
+The LOD of $L$ shows $L\%$ of all points of an object. For example, a chunk with LOD 100 contains all its points, while a chunk with LOD 75 has $75\%$ of its points.
 
 \begin{figure}[h]
     \centering
@@ -79,11 +78,11 @@ The LOD of $L$ shows $L\%$ of all points of an object. For example, a chunk with
     \label{fig:cloud_lods}
 \end{figure}
 
-The approach is to generate different levels of detail for each chunk, so it will be possible to show fewer points for chunks that are far enough not to notice the low-detailed chunk.
+The approach is to generate different levels of detail for each chunk, so it will be possible to show fewer points for chunks that are far enough, and thus, are not likely to be noticed.
 
 \subsection{Reducing the number of points}
 
-When loading the data with a specific LOD, the algorithm takes each $stride^{th}$ element from the set of all chunk points. Stride is calculated using the \autoref{eqn:lod_stride}.
+When loading the data with a specific LOD, the algorithm takes each $stride^{th}$ element from the set of all chunk points. Stride is calculated using \autoref{eqn:lod_stride}.
 
 \begin{equation}
 \label{eqn:lod_stride}
@@ -93,7 +92,7 @@ stride(LOD) = \frac{100}{LOD}
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.8\textwidth]{lod-stride.pdf}
-    \caption{Example of stride with $LOD = 25$. In that case $stride(25)=4$.}
+    \caption{Example of stride with $LOD = 25$. In this case $stride(25)=4$.}
     \label{fig:stride}
 \end{figure}
 
@@ -120,18 +119,18 @@ distance(p_1, p_2) = \sqrt{(p_1^x-p_2^x)^2 + (p_1^y-p_2^y)^2 + (p_1^z-p_2^x)^2}
 
 \subsection{Time complexity}
 
-This algorithm traverses all chunk points once, so the complexity can be evaluated to $\mathcal{O}(n)$ (where $n$ is the number of points in a chunk), assuming that copying a point has constant complexity.
+This algorithm traverses all chunk points once, so the complexity can be evaluated as $\mathcal{O}(n)$ (where $n$ is the number of points in a chunk), assuming that copying a point has constant complexity.
 
 
 \section{Method 2: Creating a Mesh}
 \label{sec:creating_mesh}
 
-Mesh is a data structure that contains vertices, texture data, normals, and other details [citation here]. Later, the engine  combines the mesh data and draws it on the scene.
+Mesh is a data structure that contains vertices, texture data, normals, and other details [citation here]. Later, when the data are visualized by a graphical engine, the engine  combines the mesh data and draws the mesh on the scene.
 
 Mesh creation consists of several stages:
 
 \begin{enumerate}
-    \item Map the point cloud into grid.
+    \item Map the point cloud into a grid.
     \item Generate triangles.
     \item Fill the mesh.
 \end{enumerate}
@@ -139,9 +138,9 @@ Mesh creation consists of several stages:
 
 \subsection{Vertex grid}
 
-Meshes consist of vertices. We first create a set of vertices that later will form the mesh.
+Meshes consist of vertices, and the algorithm first create a set of vertices that later will form the mesh.
 
-First, the algorithm generates a flat grid of vertices. It is a square-bounded grid-aligned region that has a specified side length. It has $length \times length$ dimensions. Each point at this plane has a height value initially set to zero.
+For that, the algorithm generates a flat grid of vertices. It is a square-bounded grid-aligned region that has a specified side length. It has $side length \times side length$ dimensions. Each point of this plane has a height value initially set to zero.
 
 \begin{figure}[ht]
     \centering
@@ -155,9 +154,7 @@ First, the algorithm generates a flat grid of vertices. It is a square-bounded g
 
 \subsubsection{Occurrence map}
 
-To determine where the mesh triangles should appear, the algorithm fills the occurrence map. The \textbf{occurrence map} tracks the appearance of points within the specified grid cells. It has the same size as the vertex grid. All map values are initially set to false. It means that no points have been noticed here yet.
-
-The algorithm maps each point within a chunk to a specific occurrence map cell.
+To determine where the mesh triangles should appear, the algorithm fills the occurrence map. The \textit{occurrence map} tracks the appearance of points within the specified grid cells. It has the same size as the vertex grid. All map values are initially set to false. It means that no points have been noticed here yet. Further, the algorithm maps each point within a chunk to a specific occurrence map cell. The occurrence map represents a strictly aligned version of the point cloud viewed from above.
 
 \begin{figure}[ht]
     \centering
@@ -181,21 +178,17 @@ The algorithm maps each point within a chunk to a specific occurrence map cell.
     \label{fig:occurrence_map}
 \end{figure}
 
-The occurrence map represents a strictly aligned version of the point cloud viewed from above.
-
 
 \subsubsection{Calculating cell indices}
 
-To work with grid, the algorithm should calculate a cell index for each point.
+To correctly position points within the grid, the algorithm should calculate a cell index for each point.
 
-To calculate an index, it should do the following:
+To calculate the index, it should do the following (\ref{eqn:cell_coordinate}):
 \begin{enumerate}
     \item Calculate the local coordinate within chunk.
     \item Divide the local coordinate by cell size.
     \item Truncate the result down.
 \end{enumerate}
-
-See the formula \ref{eqn:cell_coordinate}.
 
 \begin{equation}
 \label{eqn:cell_coordinate}
@@ -209,7 +202,7 @@ After initializing the vertex grid and occurrence map, the algorithm starts proc
 
 For each point in a point cloud, the algorithm  calculates its grid cell index and fills the corresponding cell in the vertex grid and occurrence map.
 
-At the vertex grid, the algorithm compares the height value stored in the cell and the height of the point (its Y coordinate). If the value stored in the grid is less than the point height, the algorithm writes the point height to the grid cell.
+At the vertex grid, the algorithm compares the height value stored in the cell and the height of the point (its $Y$ coordinate). If the value stored in the grid is less than the point height, the algorithm writes the point height to the grid cell.
 
 At the occurrence map, the algorithm tracks the occurrence of the points in the grid cells. If a point belongs to the cell, that cell is marked as visited.
 
@@ -231,7 +224,7 @@ At the occurrence map, the algorithm tracks the occurrence of the points in the 
 
 \subsection{Generating triangles}
 
-After finishing building the vertex grid, it is necessary to combine vertices into triangles that are going to form the mesh. To achieve this, the algorithm uses the vertex grid and the occurrence map from the previous step.
+After finishing building the vertex grid, it is necessary to combine vertices into triangles that will be used to form the mesh. To achieve this, the algorithm uses the vertex grid and the occurrence map from the previous step.
 
 The algorithm traverses the vertex grid. The main goal is to connect three adjacent points in the grid into a triangle.
 
@@ -278,13 +271,13 @@ To check whether it is possible to create a triangle, the algorithm checks two a
     }
 \end{algorithm}
 
-Collected sets of vertices and triangles now form the mesh. Later, it is possible to apply some refinements to it, like texture, normals, or material data.
+Collected sets of vertices and triangles now form the mesh. Later, it is possible to apply some refinements to it, e.g., texture, normals, or material data.
 
 \subsection{Time complexity}
 
 This algorithm has two loops that are executed one after another.
 
-The first loop traverses over all chunk points – thus, its complexity can be evaluated to $\mathcal{O}(n_1)$ (where $n_1$ is the number of points in a chunk), assuming that condition evaluation, math operations, and memory access have constant complexity.
+The first loop traverses over all chunk points – thus, its complexity can be evaluated as $\mathcal{O}(n_1)$ (where $n_1$ is the number of points in a chunk), assuming that condition evaluation, math operations, and memory access have constant complexity.
 
 The second loop traverses over the vertex grid, which has $length \times length$ cells. It means that its complexity can be evaluated as $\mathcal{O}(n_2)$ (where $n_2$ is the number of cells in a grid), assuming that other operations have constant complexity.
 
