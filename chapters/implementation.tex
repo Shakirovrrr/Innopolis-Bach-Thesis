@@ -1,0 +1,113 @@
+\chapter{Implementation}
+\label{chap:implementation}
+
+\graphicspath{{figs/implementation/}}
+
+This chapter introduces the implementation details of the proposed methods. The methods are described in the Methodology chapter. First, this chapter introduces the development platform and programming tools. Then it describes the peculiarities of implementing the methods on the chosen platform.
+
+\section{Development Environment}
+
+The project on which the authors are working introduced several development and business constraints. The main development constraint was the programming environment: it is required to develop the application using the Unity Platform, as we work on a part of a larger project which already uses Unity.
+
+\subsection{Unity Platform}
+
+Unity Platform is a platform for creating and running 3D content [citation here].  We use it for developing the application that visualizes the scanned locations on client devices.
+
+There are several reasons for using an existing graphics engine:
+
+\begin{itemize}
+    \item Platform-agnostic development. Unity claims to support a wide range of devices and platforms, including desktop and mobile devices. This aspect is important as the primary project targets mobile devices for on-the-road usage [citation here].
+    
+    \item Lower development costs. Unity provides the functionality for visualization and scripting, which would require deep research or a team of highly skilled specialists to implement that functionality on our own.
+\end{itemize}
+
+Unity engine uses .NET runtime and C\# programming language for scripting API [citation here].
+
+For implementing the point cloud visualization module, we use Unity 2020.2.
+
+
+\section{Data Preprocessing}
+
+Input data are being recorded directly from lidar in PCAP format. PCAP is an open network traffic capturing system that uses its own “.pcap” file format [citation here]. The lidar controller software receives the data in network packets and captures the incoming stream into a PCAP file. Lidar controller uses a specific VLP-16 PCAP structure that stores the lidar laser firing responses, firing time, and capturing coordinates [citation here].
+
+\subsection{Converting to LAS format}
+
+As mentioned above, the file contains the recorded packet stream from the lidar at the time of capturing an area. It means that the data are stored as individual captures from various perspectives and at different times.
+
+This step collects the data stream into the single point cloud, which represents the whole captured area. The resulting point cloud is stored in LAS format [citation here].
+
+LAS is an open file format for storing 3D point cloud data developed by the American Society for Photogrammetry and Remote Sensing [citation here]. Unlike PCAP, the LAS format stores the points of the cloud as integer number triplets  [citation here].
+
+The project team uses the VeloView software for converting the PCAP captured stream into LAS files.
+
+\subsection{Importing LAS files into Unity}
+
+As this project uses the Unity engine as a base, it is essential to have the ability to read LAS files within its programming environment. 
+
+The project uses the LASZip.net library for reading LAS files in the C\# environment.
+
+The importing class was created to instruct Unity about LAS file loading thus, further importing routines can be done automatically by Unity both in the editor and run time.
+
+
+\section{Method 1: Generating LODs}
+
+This method is described in detail in \autoref{chap:methodology} \autoref{sec:generating_lods}. The method implementation includes point cloud loading, generating different levels of detail, and storing the generated LODs in the asset database for faster retrieval at run time.
+
+\subsection{Storing different LODs in an asset database}
+
+Unity engine supports storing and loading resources using the asset system [citation here]. It helps developers to distribute application resources in a format that is natively supported by the Unity engine.
+
+In Unity, each LOD should have its corresponding game object [citation here]. To systematically store generated point clouds with different LODs, we use the asset database API that helps to organize the stored resource library.
+
+For a single point cloud object, for each chunk and each level of chunk detail, the different asset is created. Thus, the total number of assets created is $N_{assets}=N_{chunks}\times N_{LODs}$.
+
+The project utilizes the AssetDatabase API [citation here], provided by Unity. First, the algorithm creates a folder for storing the database. Next, as the chunk is generated with requested LODs, the corresponding assets are created.
+
+\texttt{AssetDatabase.CreateFolder(directorypath, name);}
+\texttt{AssetDatabase.CreateAsset(data, filename);}
+
+\subsection{Applying LODs}
+
+Unity requires each LOD to be a separate game object that corresponds to a parent game object. From the other perspective, the main game object has several supplementary game objects that correspond to different levels of detail. These LOD game objects are managed by the LOD Group component [citation here]. Each chunk has its own LOD group that manages chunk detail levels based on the distance to the viewer.
+
+For the major project, we proposed the following LOD distances and levels:
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{l|l}
+    Distance   (abstract engine units) & LOD (stride) \\ \hline
+    \textless 100 & 1 \\
+    100 to 200 & 8 \\
+    200 to 300 & 24 \\
+    \textgreater 300 & ?
+    \end{tabular}
+    
+    \caption{LOD distances and their corresponding levels.}
+\end{table}
+
+The shown settings helped us efficiently utilize the computational resources and significantly improve the performance. The detailed performance comparison and results are shown in the Results chapter.
+
+
+\section{Method 2: Creating a Mesh}
+
+This method is described in detail in \autoref{chap:methodology} \autoref{sec:creating_mesh}. The method implementation includes creating the Unity mesh structure that the engine will render at the run time.
+
+\subsection{Initializing the vertex grid}
+
+Vertex grid is a grid-aligned set of vertices that will later form the mesh. We initialize the vertex grid as follows:
+
+\lstinputlisting[language={[Sharp]C}]{code/vertex-grid-init.cs}
+
+Note that the second coordinate is Z, as Unity treats Y-axis as up facing. We initialize the grid as a one-dimensional array as it will be easier to iterate over vertices later.
+
+The next step is to fill the vertex grid and occurrence map. It is done by iterating over points array.
+
+\lstinputlisting[language={[Sharp]C}]{code/fill-vertex-grid.cs}
+
+We create a list of triangles. It will contain the vertex indices that will form triangles. Next, the algorithm iterates over the occurrence map and records the triangles into the list.
+
+\lstinputlisting[language={[Sharp]C}]{code/generate-triangles.cs}
+
+After the triangle list has been filled, we create the mesh object. The Mesh type represents a mesh in the Unity engine [citation here]. It requires triangles and vertices. Optionally, some enhancements can be added like texture, material, or shaders.
+
+\lstinputlisting[language={[Sharp]C}]{code/create-mesh.cs}

@@ -28,7 +28,6 @@
 \bibliography{ref.bib}
 \DefineBibliographyStrings{english}{%
   bibliography = {References},}
-\usepackage{blindtext}
 \usepackage{pdfpages}
 \newenvironment{bottompar}{\par\vspace*{\fill}}{\clearpage}
 \usepackage{amsmath,amsfonts}
@@ -83,7 +82,22 @@
   label=(\arabic*),
 }
 
+\lstdefinestyle{code_snippet} {
+    commentstyle=\color{gray},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{blue},
+    stringstyle=\color{green},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    tabsize=2
+}
 
+\lstset{style=code_snippet}
 
 
 \pagestyle{fancyplain}
@@ -123,6 +137,7 @@
 % Depend on above part
 \setcounter{page}{6}
 \include{chapters/methodology}
+\include{chapters/implementation}
 
 
 %% REFERENCES
