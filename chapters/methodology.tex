@@ -12,15 +12,15 @@ This project aims to work with large amounts of point cloud data. They contain a
 \section{Data Preprocessing}
 \label{sec:data_preprocessing}
 
-The data themself is stored in a PCAP file as captured packet stream from the lidar. It is necessary to preprocess original files before working on the point cloud. The preprocessing involves three main steps: converting the file from PCAP format to the LAS format, importing the LAS file into Unity, and splitting the point cloud data into chunks.
+The data themselves are stored in a VLP-16 PCAP file as captured packet stream from a lidar. It is necessary to preprocess original files before working on the point cloud. The preprocessing involves three main steps: converting the file from PCAP format to the LAS format, importing the LAS file into Unity, and splitting the point cloud data into chunks.
 
 Converting the PCAP files to the LAS format and importing them into Unity are covered in \autoref{chap:implementation}.
 
 \subsection{Splitting into chunks}
 
-For the proposed methods, it is crucial to split the point cloud into smaller units (chunks) that are easier to process. It also helps to process the data in a parallel manner, thereby making the algorithms more scalable in terms of performance.
+For the proposed methods, it is crucial to split the point cloud into smaller units (chunks) that are easier to process. It also allows to process the data in a parallel manner, thereby making the algorithms more scalable in terms of performance.
 
-In terms of the given project, the chunk is a space bounded by the computed borders. It has a position and a size, both of which  are the same for its width, height, and depth.
+In terms of the Innopolis Simulator project, the chunk is a space bounded by the computed borders. A chunk has a position and a size, which is  the same for its width, height, and depth. 
 
 As a part of this project, we developed an algorithm for splitting the data into chunks. At the start, the algorithm computes the number of chunks in three dimensions using the \autoref{eqn:n_chunks}. It uses the predefined chunk size and the boundaries of the point cloud object.
 
@@ -31,25 +31,25 @@ The number of chunks for an axis $\alpha$ is computed as follows:
 N_{chunks}^\alpha = \lceil BBox_{max}^\alpha - BBox_{min}^\alpha \rceil / Size_{chunk}
 \end{equation}
 
-The chunk grid has the size of $N_{chunks}^X \times N_{chunks}^Y \times N_{chunks}^Z$. The chunks are stored in a three-dimensional array. It means that each chunk has its corresponding index.
+The chunk grid has the size of $N_{chunks}^X \times N_{chunks}^Y \times N_{chunks}^Z$. The chunks are stored in a three-dimensional array. It means that each chunk has its own corresponding index.
 
-After that, the algorithm iterates overall points and computes the exact chunk index they correspond to, based on their global position.
+After that, the algorithm iterates over all points and computes the exact chunk index they correspond to, based on their global position.
 
-The chunk index for a point with position $pos$ on an axis $\alpha$ is computed as shown in formula \ref{eqn:point_index}:
+The chunk index for a point with position $pos$ on an axis $\alpha$ is computed as shown in formula \ref{eqn:point_index} using the bounding box ($BBox$ coordinates):
 
 \begin{equation}
 \label{eqn:point_index}
 Index_{pos}^\alpha = \left \lfloor \frac{pos^{\alpha} - BBox_{min}^\alpha}{Size_{chunk}} \right \rfloor
 \end{equation}
 
-In the end, the points are stored within the chunks. It is now possible to read the point cloud data in the chunks.
+Finally, the points are stored within the chunks. It is now possible to read the point cloud data in the chunks.
 
 
 \section{Method 1: Generating LODs}
 \label{sec:generating_lods}
 
 The level of detail defines the complexity of the model [citation here]. For this project, the level of detail adjusts the number of points shown for a particular object.
-The LOD of $L$ shows $L\%$ of all points of an object. For example, a chunk with LOD 100 contains all its points, while a chunk with LOD 75 has $75\%$ of its points.
+The LOD of $L$ shows $L\%$ of all object points. For example, a chunk with LOD 100 contains all its points, while a chunk with LOD 75 has $75\%$ of its points.
 
 \begin{figure}[h]
     \centering
@@ -108,7 +108,7 @@ stride(LOD) = \frac{100}{LOD}
     }
 \end{algorithm}
 
-Different levels of detail are pregenerated for each chunk. The algorithm generates distinct assets \footnote{Asset is an item that can be used within an application (3D model, picture, audio, code, etc.).} for each requested LOD.
+Different levels of detail are pregenerated for each chunk. The algorithm generates distinct assets\footnote{Asset is an item that can be used within an application (3D model, picture, audio, code, etc.).} for each requested LOD.
 
 When visualization is in progress, the LOD for each chunk is selected based on the distance between the viewer and the chunk. A user predefines the distances and corresponding LODs. The distance between two objects can be computed using the Pythagorean theorem (\autoref{eqn:pythagorean_3d}) as the coordinates are available for all objects.
 
@@ -138,7 +138,7 @@ Mesh creation consists of several stages:
 
 \subsection{Vertex grid}
 
-Meshes consist of vertices, and the algorithm first create a set of vertices that later will form the mesh.
+Meshes consist of vertices, and the algorithm first creates a set of vertices that later will form the mesh.
 
 For that, the algorithm generates a flat grid of vertices. It is a square-bounded grid-aligned region that has a specified side length. It has $side length \times side length$ dimensions. Each point of this plane has a height value initially set to zero.
 
@@ -185,14 +185,14 @@ To correctly position points within the grid, the algorithm should calculate a c
 
 To calculate the index, it should do the following (\ref{eqn:cell_coordinate}):
 \begin{enumerate}
-    \item Calculate the local coordinate within chunk.
+    \item Calculate a local coordinate within chunk.
     \item Divide the local coordinate by cell size.
     \item Truncate the result down.
 \end{enumerate}
 
 \begin{equation}
 \label{eqn:cell_coordinate}
-Cell coordinate(p) = \left \lfloor \frac{Pos(p) - chunk origin}{cell size} \right \rfloor
+Cell\:coordinate(p) = \left \lfloor \frac{Pos(p) - chunk origin}{cell size} \right \rfloor
 \end{equation}
 
 
@@ -252,7 +252,7 @@ To check whether it is possible to create a triangle, the algorithm checks two a
         \caption{Both triangles.}
     \end{subfigure}
     
-    \caption{Triangle creation. Green cells show that the cell appears on occurrence map as visited.}
+    \caption{Triangle creation. Green color indicates that the cell appears on occurrence map as visited.}
     \label{fig:triangle_generation}
 \end{figure}
 
@@ -271,13 +271,13 @@ To check whether it is possible to create a triangle, the algorithm checks two a
     }
 \end{algorithm}
 
-Collected sets of vertices and triangles now form the mesh. Later, it is possible to apply some refinements to it, e.g., texture, normals, or material data.
+Collected sets of vertices and triangles now form the mesh. Later, it is possible to apply some refinements to this mesh, e.g., texture, normals, or material data.
 
 \subsection{Time complexity}
 
-This algorithm has two loops that are executed one after another.
+This algorithm has two loops that are executed one after another: vertex grid building and triangles generation.
 
-The first loop traverses over all chunk points – thus, its complexity can be evaluated as $\mathcal{O}(n_1)$ (where $n_1$ is the number of points in a chunk), assuming that condition evaluation, math operations, and memory access have constant complexity.
+The first loop traverses over all chunk points, thus, its complexity can be evaluated as $\mathcal{O}(n_1)$ (where $n_1$ is the number of points in a chunk), assuming that condition evaluation, math operations, and memory access have constant complexity.
 
 The second loop traverses over the vertex grid, which has $length \times length$ cells. It means that its complexity can be evaluated as $\mathcal{O}(n_2)$ (where $n_2$ is the number of cells in a grid), assuming that other operations have constant complexity.
 
