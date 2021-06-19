@@ -1,0 +1,51 @@
+\chapter{Literature review}
+\label{chap:lr}
+
+% TODO: Make Latex references
+
+This thesis addresses the problem slightly covered by the scholar community, and it is not easy to find related research to support this work. The absence of relevant literature highlights the research gap in the current research topic.
+
+For this thesis, we selected six papers that fit the topic and helps us to create helpful research. There are four conference proceedings, one journal article, and one patent. These include research on generating different levels of detail for graphical objects, building terrain information based on raw scanner data, and other performance optimization techniques.
+
+This review examined preprocessing algorithms, real-time approaches, and other auxiliary methods that we may apply in this work.
+
+The first part of this review examines the preprocessing methods. The second part explores the real-time methods. In the end, we have a look at auxiliary methods that are not directly related to this research.
+
+
+\section{Preprocessing methods}
+
+Preprocessing the raw data plays a crucial role in optimizing the performance of further visualization. It might help us to apply more advanced methods at run time. In this section, we are going to observe the methods for point cloud data preparation.
+
+\subsection{Estimating surface normals from noisy PCD}
+
+\textcite{Mitra2003} proposed the method for generating terrain maps out of point cloud data (PCD). This paper also provided techniques for noise filtering. Both methods might help to improve the overall performance of our visualization software but are not fully applicable in current work because they do not involve LOD generation and operates before the run time.
+
+\subsection{Sorting vertices}
+
+\textcite{Evans2013} came with an algorithm for sorting the vertices before sending the point cloud data to the graphics device. Ordered data allows us to generate different levels of detail and dynamically change them continuously. However, this method involves the usage of octree maps which have high memory consumption. The question of how to efficiently store the point cloud remains open.
+
+
+\section{Real-time methods}
+
+This work assesses methods for real-time LOD generation, so it is important to examine existing solutions and their differences and drawbacks. There is no solution for the proposed problem, but different concepts might help us overcome the drawbacks.
+
+\subsection{Real-time depth grid LODs for automotive}
+
+\textcite{Schmid2010} introduced an algorithm for the real-time level of detail generation for depth perception data from LiDAR installed in a car. It involves simple mathematical computations, and we can potentially apply it for visualizing recorded data. Although this method operates with LiDAR-generated point clouds, the algorithm does not operate with point vertices. Instead, it uses a depth grid with dynamically changing resolution. We found the mathematical foundations introduced in this method helpful for this work.
+
+\subsection{Generating LODs using tessellation}
+
+In their book, \textcite{Malik2000} came with another suitable approach for real-time visualization – tessellation-based LOD generation. The main advantage of this method is that it utilizes the base functionality of modern graphics hardware – tessellation. It means that we can efficiently generate different levels of detail in run time. However, the method uses terrain data rather than raw point cloud data, but it might be possible to adapt the concepts of this algorithm to our needs.
+
+
+\section{Auxiliary methods}
+
+Some auxiliary methods cannot be directly applied to point cloud data, but we found some parts helpful for preparing and visualizing the data.
+
+\subsection{Assessing the impact on performance for different LODs}
+
+\textcite{Minarno2020} observed a method for generating terrain with different levels of detail (LOD) by reducing the amount of data used to generate meshes. Also, this paper assessed the impact on resource usage and overall performance for different LODs and provided the correlation data for performance/detail metrics. However, this work did not emphasize the process of LOD creation. Instead, it paid more attention to statistics collection and comparison.
+
+\subsection{Visualizing complex meshes with different LODs}
+
+\textcite{Callahan2005} proposed an algorithm for generating a dynamic level of detail based on sampling techniques. The authors examined four different approaches to down-sampling. This work has a significant advantage – the authors designed the algorithm to execute on graphics hardware (GPU). However, this method needs adaptation for visualizing point clouds as original implementation approaches complex mesh visualization. It is unclear whether we can apply the algorithm at run time, and this question needs further investigation.

@@ -24,10 +24,11 @@
 
 
 \usepackage[english]{babel}
-\usepackage[backend=biber,style=ieee,autocite=inline]{biblatex}
+\usepackage[backend=biber,style=ieee,autocite=inline,citestyle=authoryear]{biblatex}
 \bibliography{ref.bib}
 \DefineBibliographyStrings{english}{%
   bibliography = {References},}
+
 \usepackage{pdfpages}
 \newenvironment{bottompar}{\par\vspace*{\fill}}{\clearpage}
 \usepackage{amsmath,amsfonts}
@@ -137,11 +138,15 @@
 % \include{chapters/abstract}
 % Depend on above part
 \setcounter{page}{6}
+\include{chapters/literature-review}
 \include{chapters/methodology}
 \include{chapters/implementation}
 
 
 %% REFERENCES
 \printbibliography[heading=bibintoc,title={Bibliography cited}]
+
+%% APPENDIX
 \include{chapters/appex}
+
 \end{document}
