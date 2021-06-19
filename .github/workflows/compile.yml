@@ -1,0 +1,30 @@
+name: Compile LaTeX
+
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Compile
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: thesis.tex
+          
+      - name: Upload PDF artifact
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Thesis
+          path: thesis.pdf
