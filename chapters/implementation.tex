@@ -3,20 +3,20 @@
 
 \graphicspath{{figs/implementation/}}
 
-This chapter introduces the implementation details of the proposed methods. The methods are described in the Methodology chapter. First, this chapter introduces the development platform and programming tools. Then it describes the peculiarities of methods implementation on the chosen platform.
+This chapter introduces the implementation details of the proposed methods. The methodology chapter describes methods on a conceptual level. First, this chapter presents the development platform and programming tools. Then it describes the peculiarities of methods implementation on the chosen platform.
 
 \section{Development Environment}
 
-The Innopolis Simulator project introduced several development and business constraints. The main development constraint was the programming environment: it was required to develop the application using the Unity Platform, as the larger project already uses Unity.
+The Innopolis Simulator project introduced several development and business constraints. The primary development constraint was the programming environment: developing the application using the Unity Platform, as the larger project already uses Unity.
 
 \subsection{Unity Platform}
 
-Unity Platform is a platform for creating and running 3D content [citation here].  We use it for developing the application that visualizes the scanned locations on client devices.
+Unity Platform is a platform for creating and running 3D content [citation here].  We use it for developing an application that visualizes the scanned locations on client devices.
 
 There are two main reasons for using an existing graphics engine:
 
 \begin{itemize}
-    \item \textit{Platform-agnostic development.} Unity claims to support a wide range of devices and platforms, including desktop and mobile devices. This aspect is important as the primary project targets mobile devices for on-the-road usage [citation here].
+    \item \textit{Platform-agnostic development.} Unity claims to support a wide range of devices and platforms, including desktop and mobile devices [citation here]. This aspect is essential as the primary project targets mobile devices for on-the-road usage [citation here].
     
     \item \textit{Lower development costs.} Unity provides the functionality for visualization and scripting, which would require deep research or a team of highly skilled specialists to implement that functionality on our own.
 \end{itemize}
@@ -51,15 +51,15 @@ We created the scripted importer [citation here] to instruct Unity about LAS fil
 
 \section{Method 1: Generating LODs}
 
-This method is described in detail in \autoref{chap:methodology} \autoref{sec:generating_lods}. The method implementation includes point cloud loading, generating different levels of detail, and storing the generated LODs in the asset database for a quick retrieval at run time.
+The \autoref{chap:methodology} describes this method in detail in  \autoref{sec:generating_lods}. The method implementation includes point cloud loading, generating different levels of detail, and storing the generated LODs in the asset database for quick retrieval at run time.
 
 \subsection{Storing different LODs in an asset database}
 
-Unity engine supports storing and loading resources using the asset system [citation here]. It helps developers to distribute application resources in a format that is natively supported by the Unity engine.
+Unity engine supports storing and loading resources using the asset system [citation here]. Thus, it helps developers distribute application resources in a natively supported format by the Unity engine.
 
 In Unity, each LOD should have its corresponding game object [citation here]. To systematically store generated point clouds with different LODs, we used the asset database API that helps to organize the stored resource library.
 
-In a single point cloud object, the system creates a different asset for each chunk and each level of chunk detail. Thus, the total number of assets created is $N_{assets}=N_{chunks}\times N_{LODs}$.
+In a single point cloud object, the system creates a different asset for each chunk and each level of chunk detail. Thus, the total number of assets made is $N_{assets}=N_{chunks}\times N_{LODs}$.
 
 The project utilizes the AssetDatabase API [citation here], provided by Unity. First, the algorithm creates a folder for storing the database. Next, as the chunk is generated with requested LODs, the corresponding assets are created.
 
@@ -70,7 +70,7 @@ AssetDatabase.CreateAsset(data, filename);
 
 \subsection{Applying LODs}
 
-Unity requires each LOD to be a separate game object that corresponds to a parent game object. From the other perspective, the main game object has several supplementary game objects that correspond to different levels of detail. These LOD game objects are managed by the LOD Group component [citation here]. Each chunk has its own LOD group that manages chunk detail levels based on the distance to the viewer.
+Unity requires each LOD to be a separate game object that corresponds to a parent game object. From the other perspective, the main game object has several supplementary game objects that correspond to different levels of detail. The LOD Group component manages these LOD game objects. [citation here]. Each chunk has its own LOD group that manages chunk detail levels based on the distance to the viewer.
 
 For the major project, we proposed the following LOD distances and levels:
 
@@ -87,12 +87,12 @@ For the major project, we proposed the following LOD distances and levels:
     \caption{LOD distances and their corresponding levels.}
 \end{table}
 
-The shown settings helped us efficiently utilize the computational resources and significantly improve the performance. The detailed performance comparison and results are shown in the Results chapter.
+The shown settings helped us efficiently utilize the computational resources and significantly improve the performance. The Results chapter shows the detailed performance comparison and results.
 
 
 \section{Method 2: Creating a Mesh}
 
-This method is described in detail in \autoref{chap:methodology} \autoref{sec:creating_mesh}. The method implementation includes creating the Unity mesh structure that the engine will render at the run time.
+The \autoref{chap:methodology} describes this method in detail in \autoref{sec:creating_mesh}. The method implementation includes creating the Unity mesh structure that the engine will render at the run time.
 
 \subsection{Initializing the vertex grid}
 
@@ -100,7 +100,7 @@ Vertex grid is a grid-aligned set of vertices that will later form the mesh. We 
 
 \lstinputlisting[language={[Sharp]C}, caption=Vertex grid initialization.]{code/vertex-grid-init.cs}
 
-Note that the second coordinate is Z, as Unity treats Y-axis as up facing. We initialized the grid as a one-dimensional array as it will be easier to iterate over vertices later.
+Note that the second coordinate is Z, as Unity treats Y-axis as up-facing. We initialized the grid as a one-dimensional array as it will be easier to iterate over vertices later.
 
 The next step is to fill the vertex grid and the occurrence map. It is done by iterating over the array of points.
 
@@ -110,6 +110,6 @@ The system creates a list of triangles. It will contain the vertex indices that 
 
 \lstinputlisting[language={[Sharp]C}, caption=Generating triangles.]{code/generate-triangles.cs}
 
-After the triangle list has been filled, we create the mesh object. The Mesh type represents a mesh in the Unity engine [citation here]. It requires triangles and vertices. Optionally, some enhancements can be added like texture, material, or shaders.
+After the triangle list has been filled, we create the mesh object. The Mesh type represents a mesh in the Unity engine [citation here]. It requires triangles and vertices. Optionally, some enhancements can be added, like texture, material, or shaders.
 
 \lstinputlisting[language={[Sharp]C}, caption=Mesh creation example.]{code/create-mesh.cs}
