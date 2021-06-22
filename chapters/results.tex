@@ -1,0 +1,86 @@
+\chapter{Results}
+\label{chap:implementation}
+
+\graphicspath{{figs/implementation/}}
+
+This chapter provides the performance metrics and resulting visuals of the described methods. \autoref{chap:methodology} describes these methods on a conceptual level, and \autoref{chap:implementation} unveils the implementation details.
+
+First, this chapter describes the measuring methodology and testing environment. Then, it shows the collected results for this application without point cloud rendering acceleration and with acceleration methods applied.
+
+
+\section{Measuring methodology}
+
+\subsection{Testing environment}
+
+We collected the results from the application running on a computer with the following technical specifications:
+
+\begin{itemize}
+    \item CPU: AMD Ryzen 7 3750H @ 2.3GHz, 4 cores (8 threads)
+    \item GPU: NVIDIA GeForce GTX 1650
+    \item RAM: 16 GB DDR4
+\end{itemize}
+
+We used the Unity Editor 2020.2.2f1 to run the developed algorithms.
+
+\subsection{Metrics}
+
+To evaluate the result, we proposed the following metrics:
+
+\begin{itemize}
+    \item Framerate (frames per second, FPS) – this metric helps assess the algorithm's performance.
+    \item Memory consumption (megabytes, MB) – this metric helps assess the algorithm's resource consumption.
+    \item Visual quality (absence of defects, amount of detail saved) – this metric is subjective.
+\end{itemize}
+
+\subsection{Testing scenario}
+
+It is crucial to provide the generalized testing scenario to make the testing unbiased. In terms of this work, we tested the single component of the larger software project. The \autoref{chap:introduction} gives a brief description of the major project.
+
+\begin{enumerate}
+    \item Select the algorithm and set the parameters.
+    \item Import or re-import\footnote{The asset should be reimported in case it was imported earlier with different parameters.} LAS file with the test point cloud.
+    \item Add the imported point cloud to the scene.
+    \item Run the scene.
+    \item Collect the metrics: the framerate in the Unity Editor, the memory usage in the operating system task manager or another resource monitor, and the rendered scene on the editor screen.
+\end{enumerate}
+
+
+\section{Collected results}
+
+To minimize the environmental impact on application performance results, we made ten measurements for each testing scenario. We collected the following data by averaging ten measures during the testing.
+
+\subsection{Generating LODs}
+
+\subsubsection{Urban environment}
+
+In this scenario, we measured the performance of the LOD generation algorithm on the urban scene that was captured from the part of Bangkok, Thailand.
+
+%% TODO Table
+
+%% TODO Pictures
+
+\subsubsection{Landscape environment}
+
+In this scenario, we measured the performance of the LOD generation algorithm in the countryside scene that was captured nearby the Innopolis, Tatarstan, Russian Federation.
+
+%% TODO Table
+
+%% TODO Pictures
+
+\subsection{Mesh generation}
+
+\subsubsection{Urban environment}
+
+In this scenario, we measured the performance of the mesh creation algorithm on the urban scene that was captured from the part of Bangkok, Thailand.
+
+%% TODO Table
+
+%% TODO Pictures
+
+\subsubsection{Landscape environment}
+
+In this scenario, we measured the performance of the mesh generation algorithm in the countryside scene that was captured nearby the Innopolis, Tatarstan, Russian Federation.
+
+%% TODO Table
+
+%% TODO Pictures
