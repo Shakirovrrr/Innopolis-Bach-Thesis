@@ -23,6 +23,15 @@ jobs:
         with:
           root_file: thesis.tex
           
+      - run: mv ./thesis.pdf ./input.pdf
+        
+      - name: Optimize PDF
+        uses: jy95/ghostscript-action@v1
+        with:
+          file: input.pdf
+          output: thesis.pdf
+          arbitrary-parameters: -dPDFSETTINGS=/printer -dDetectDuplicateImages=true
+          
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v2
         with:
