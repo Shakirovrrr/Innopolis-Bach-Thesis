@@ -1,4 +1,4 @@
-\chapter{Results}
+\chapter{Results and Discussion}
 \label{chap:implementation}
 
 \graphicspath{{figs/results/}}
@@ -309,16 +309,53 @@ The \autoref{fig:results:graph-mem} summarizes the results on memory usage.
     %
     \begin{subfigure}{0.3\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{graph-fps-med.pdf}
+        \includegraphics[width=\textwidth]{graph-mem-med.pdf}
         \caption{Medium quality}
     \end{subfigure}
     %
     \begin{subfigure}{0.3\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{graph-fps-low.pdf}
+        \includegraphics[width=\textwidth]{graph-mem-low.pdf}
         \caption{Low quality}
     \end{subfigure}
     
     \caption{Framerate measured on different quality settings.}
-    \label{fig:results:graph-fps}
+    \label{fig:results:graph-mem}
+\end{figure}
+
+The Mesh generation method uses 5.9x to 7.3x times less memory than baseline on urban scene and 5.4x to 6.4x times less memory on landscape scene.
+
+Due to implementation peculiarities, the LOD generation algorithm uses the same amount of memory as the baseline.
+
+\section{Limitations}
+
+\subsection{LOD generation}
+
+The LOD generation algorithm shows good visual quality when observing the scene from a far distance. However, due to the nature of point clouds, it loses detail in a close look. Furthermore, as there is a distance between points, the zoomed point cloud becomes hard to observe.
+
+%% TODO Illustration
+
+\subsection{Mesh generation}
+
+Although the Mesh generation algorithm demonstrates excellent performance and detail, it has a fundamental flaw: this algorithm cannot correctly handle the scenes with objects placed above the ground, so there is a space between the surface and the object. Examples are bridges, trees, cranes, flying objects. This case is demonstrated on \autoref{fig:results:mesh-edgecase}.
+
+As the algorithm records the highest point of the point cloud, the result will appear as a hill with all the details discarded under it.
+
+\begin{figure}[h]
+    \centering
+    
+    \begin{subfigure}{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{lod-edgecase.jpg}
+        \caption{LOD generation. result}
+    \end{subfigure}
+    %
+    \begin{subfigure}{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{mesh-edgecase.jpg}
+        \caption{Mesh creation result.}
+    \end{subfigure}
+    
+    \caption{An example of edge case for mesh generation algorithm. It discards the detail under the bridge.}
+    \label{fig:results:mesh-edgecase}
 \end{figure}
