@@ -1,7 +1,7 @@
 \chapter{Results}
 \label{chap:implementation}
 
-\graphicspath{{figs/implementation/}}
+\graphicspath{{figs/results/}}
 
 This chapter provides the performance metrics and resulting visuals of the described methods. \autoref{chap:methodology} describes these methods on a conceptual level, and \autoref{chap:implementation} unveils the implementation details.
 
@@ -36,6 +36,8 @@ To evaluate the result, we proposed the following metrics:
 
 It is crucial to provide the generalized testing scenario to make the testing unbiased. In terms of this work, we tested the single component of the larger software project. The \autoref{chap:introduction} gives a brief description of the major project.
 
+The testing scenario steps are the following:
+
 \begin{enumerate}
     \item Select the algorithm and set the parameters.
     \item Import or re-import\footnote{The asset should be reimported in case it was imported earlier with different parameters.} LAS file with the test point cloud.
@@ -49,38 +51,206 @@ It is crucial to provide the generalized testing scenario to make the testing un
 
 To minimize the environmental impact on application performance results, we made ten measurements for each testing scenario. We collected the following data by averaging ten measures during the testing.
 
+
 \subsection{Generating LODs}
 
 \subsubsection{Urban environment}
 
-In this scenario, we measured the performance of the LOD generation algorithm on the urban scene that was captured from the part of Bangkok, Thailand.
+In this scenario, we measured the performance of the LOD generation algorithm on the urban scene that was captured from the part of Bangkok, Thailand [citation here].
 
-%% TODO Table
+\begin{table}[h]
+    \centering
+    \begin{tabular}{l|l|l|l}
+    LODs & FPS & Memory (GB) & Visual quality (relative) \\ \hline
+    800, 1600, 3200 & 25.1 & 3.2 & High \\
+    400, 800, 1600 & 49.5 & 3.2 & Medium \\
+    200, 800, 1600 & 65.3 & 3.2 & Low
+    \end{tabular}
+    
+    \caption{Results for LOD generation algorithm on urban environment}
+    \label{tab:results:lod-urban}
+\end{table}
 
-%% TODO Pictures
+\begin{figure}[htb]
+    \centering
+    
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{lod-urban-800.jpg}
+        \caption{LOD 800-1600-3200}
+        \label{fig:results:lod-urban-800}
+    \end{subfigure}
+    %
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{lod-urban-400.jpg}
+        \caption{LOD 400-800-1600}
+        \label{fig:results:lod-urban-400}
+    \end{subfigure}
+    
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{lod-urban-200.jpg}
+        \caption{LOD 200-800-1600}
+        \label{fig:results:lod-urban-200}
+    \end{subfigure}
+    
+    \caption{Urban scene rendered with LODs.}
+\end{figure}
+
+On the \autoref{fig:results:lod-urban-800} the picture quality is acceptable. This setting saves most of the detail and delivers a high render distance without significant quality loss. However, it is hard to examine the scene in the close distance as the emptiness between points becomes noticeable.
+
+Unlike the previous one, on the \autoref{fig:results:lod-urban-400} this setting delivers a lower render distance, and the algorithm renders far chunks with lower quality.
+
+On the \autoref{fig:results:lod-urban-800} the setting provides the lowest quality for the far chunks.
+
 
 \subsubsection{Landscape environment}
 
 In this scenario, we measured the performance of the LOD generation algorithm in the countryside scene that was captured nearby the Innopolis, Tatarstan, Russian Federation.
 
-%% TODO Table
+\begin{table}[htb]
+    \centering
+    \begin{tabular}{l|l|l|l}
+    LODs & FPS & Memory (GB) & Visual quality (relative) \\ \hline
+    300, 600,   1200 & 17.0 & 2.4 & High \\
+    200, 400, 800 & 21.6 & 2.4 & Meduim \\
+    100, 200, 400 & 42.2 & 2.4 & Low
+    \end{tabular}
+    
+    \caption{Caption}
+    \label{tab:results:lod-landscape}
+\end{table}
 
-%% TODO Pictures
+\begin{figure}[h]
+    \centering
+    
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{lod-landscape-300.jpg}
+        \caption{LOD 300-600-1200}
+        \label{fig:results:lod-landscape-300}
+    \end{subfigure}
+    %
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{lod-landscape-200.jpg}
+        \caption{LOD 200-400-800}
+        \label{fig:results:lod-landscape-200}
+    \end{subfigure}
+    
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{lod-landscape-100.jpg}
+        \caption{LOD 100-200-400}
+        \label{fig:results:lod-landscape-100}
+    \end{subfigure}
+    
+    \caption{Landscape scene rendered with LODs.}
+\end{figure}
+
+On the \autoref{fig:results:lod-landscape-300} the picture quality is acceptable. However, it is hard to examine the scene in the close distance as the emptiness between points becomes noticeable.
+
+On the \autoref{fig:results:lod-landscape-200} the picture quality is acceptable. However, as fewer points are rendered, a grain appears on the model.
+
+On the \autoref{fig:results:lod-landscape-100} the picture quality is not acceptable. Due to the low number of rendered points, a noticeable grain appeared on the model.
+
 
 \subsection{Mesh generation}
 
 \subsubsection{Urban environment}
 
-In this scenario, we measured the performance of the mesh creation algorithm on the urban scene that was captured from the part of Bangkok, Thailand.
+In this scenario, we measured the performance of the mesh creation algorithm on the urban scene that was captured from the part of Bangkok, Thailand [citation here].
 
-%% TODO Table
+\begin{table}[htb]
+    \centering
+    \begin{tabular}{l|l|l|l}
+    Chunk resolution & FPS & Memory (MB) & Visual quality (relative) \\ \hline
+    256 & 71.4 & 551.9 & High \\
+    128 & 130.4 & 498.6 & Meduim \\
+    64 & 182.9 & 446.0 & Low
+    \end{tabular}
+    
+    \caption{Caption}
+    \label{tab:results:mesh-urban}
+\end{table}
 
-%% TODO Pictures
+\begin{figure}[h]
+    \centering
+    
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{mesh-urban-256.jpg}
+        \caption{Mesh w. chunk resolution 256}
+        \label{fig:results:mesh-urban-256}
+    \end{subfigure}
+    %
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{mesh-urban-128.jpg}
+        \caption{Mesh w. chunk resolution 128}
+        \label{fig:results:mesh-urban-128}
+    \end{subfigure}
+    
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{mesh-urban-64.jpg}
+        \caption{Mesh w. chunk resolution 64}
+        \label{fig:results:mesh-urban-64}
+    \end{subfigure}
+    
+    \caption{Urban scene rendered with generated mesh.}
+\end{figure}
+
+On the \autoref{fig:results:mesh-urban-256} the setting saves the most of detail on the model.
+
+On the \autoref{fig:results:mesh-urban-128} the setting shows less detail than the previous one, but the image has less noise than in the previous setting.
+
+On the \autoref{fig:results:mesh-urban-64} the setting drops most of the detail, and the chunk borders become noticeable.
+
 
 \subsubsection{Landscape environment}
 
 In this scenario, we measured the performance of the mesh generation algorithm in the countryside scene that was captured nearby the Innopolis, Tatarstan, Russian Federation.
 
-%% TODO Table
+\begin{table}[htb]
+    \centering
+    \begin{tabular}{l|l|l|l}
+    Chunk resolution & FPS & Memory (MB) & Visual quality (relative) \\ \hline
+    256 & 148.8 & 453.2 & High \\
+    128 & 203.6 & 425.2 & Meduim \\
+    64 & 219.3 & 379.7 & Low
+    \end{tabular}
+    
+    \caption{Caption}
+    \label{tab:results:mesh-landscape}
+\end{table}
 
-%% TODO Pictures
+\begin{figure}[h]
+    \centering
+    
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{mesh-landscape-256.jpg}
+        \caption{Mesh w. chunk resolution 256}
+        \label{fig:results:mesh-landscape-256}
+    \end{subfigure}
+    %
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{mesh-landscape-128.jpg}
+        \caption{Mesh w. chunk resolution 128}
+        \label{fig:results:mesh-landscape-128}
+    \end{subfigure}
+    
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{mesh-landscape-64.jpg}
+        \caption{Mesh w. chunk resolution 64}
+        \label{fig:results:mesh-landscape-64}
+    \end{subfigure}
+    
+    \caption{Landscape scene rendered with generated mesh.}
+\end{figure}
+
+As the scene does not contain much detail, the picture quality is equally good on all samples. However, as the chunk size decreases, the chunk borders become thicker and more noticeable and occur more often.
