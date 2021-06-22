@@ -72,6 +72,9 @@
 \usepackage{longtable}
 \usepackage[font=singlespacing, labelfont=bf]{caption}
 
+\counterwithout{table}{chapter}
+\renewcommand{\thetable}{\Roman{table}}
+
 %Hints
 \newcommand\pic[1]{(Fig. \ref{#1})} %Ref on figure
 \newcommand\tab[1]{(Tab. \ref{#1})} %Ref on table
