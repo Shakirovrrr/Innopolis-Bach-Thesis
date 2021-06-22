@@ -259,6 +259,8 @@ All rendered visuals are available in a bigger size in Appendix [chapter].
 
 \section{Evaluation}
 
+\subsection{Framerate}
+
 The \autoref{fig:results:graph-fps} summarizes the results on framerate.
 
 \begin{figure}[h]
@@ -267,6 +269,41 @@ The \autoref{fig:results:graph-fps} summarizes the results on framerate.
     \begin{subfigure}{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{graph-fps-high.pdf}
+        \caption{High quality}
+    \end{subfigure}
+    %
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{graph-fps-med.pdf}
+        \caption{Medium quality}
+    \end{subfigure}
+    %
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{graph-fps-low.pdf}
+        \caption{Low quality}
+    \end{subfigure}
+    
+    \caption{Framerate measured on different quality settings.}
+    \label{fig:results:graph-fps}
+\end{figure}
+
+The results show that the Mesh generation method demonstrates significant performance improvement over baseline and LOD generation methods.
+
+The LOD generation method shows 2.5x to 6.5x performance improvement compared to baseline on urban scene and 1.1x to 2.8x performance improvement on landscape scene.
+
+The Mesh generation method shows 7.1x to 18.2x performance improvement compared to baseline on urban scene and 9.9x to 14.6x performance improvement on landscape scene.
+
+\subsection{Memory usage}
+
+The \autoref{fig:results:graph-mem} summarizes the results on memory usage.
+
+\begin{figure}[h]
+    \centering
+    
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{graph-mem-high.pdf}
         \caption{High quality}
     \end{subfigure}
     %
