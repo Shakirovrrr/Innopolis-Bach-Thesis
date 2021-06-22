@@ -1,5 +1,5 @@
 \chapter{Results and Discussion}
-\label{chap:implementation}
+\label{chap:results}
 
 \graphicspath{{figs/results/}}
 
@@ -333,7 +333,12 @@ Due to implementation peculiarities, the LOD generation algorithm uses the same 
 
 The LOD generation algorithm shows good visual quality when observing the scene from a far distance. However, due to the nature of point clouds, it loses detail in a close look. Furthermore, as there is a distance between points, the zoomed point cloud becomes hard to observe.
 
-%% TODO Illustration
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{lod-limitation.jpg}
+    \caption{Point cloud visualised with LOD generation algorithm in close look.}
+    \label{fig:results:lod-limitation}
+\end{figure}
 
 \subsection{Mesh generation}
 
@@ -344,13 +349,13 @@ As the algorithm records the highest point of the point cloud, the result will a
 \begin{figure}[h]
     \centering
     
-    \begin{subfigure}{0.4\textwidth}
+    \begin{subfigure}{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{lod-edgecase.jpg}
         \caption{LOD generation. result}
     \end{subfigure}
     %
-    \begin{subfigure}{0.4\textwidth}
+    \begin{subfigure}{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{mesh-edgecase.jpg}
         \caption{Mesh creation result.}
@@ -359,3 +364,15 @@ As the algorithm records the highest point of the point cloud, the result will a
     \caption{An example of edge case for mesh generation algorithm. It discards the detail under the bridge.}
     \label{fig:results:mesh-edgecase}
 \end{figure}
+
+\section{Discussion}
+
+It was observed that the Mesh generation method shows a higher performance boost when comparing to the LOD generation method. Mesh generation also uses significantly less memory than LOD generation. However, it has a significant drawback that was discussed above.
+
+The LOD generation algorithm produces good results for observing point clouds from a far perspective. It keeps the detail of the point cloud and correctly handles the complex cases like floating objects that the Mesh generation algorithm might handle erratically. However, it is not applicable for close or precise object examination.
+
+The Mesh generation algorithm should be applicable in most cases. For example, it produces good results when visualizing open landscape areas with simple geometry. Therefore, the Innopolis Simulator team decided to use the Mesh generation in the simulator software.
+
+One might use the LOD generation algorithm for examining the raw point clouds as it visualizes the cloud in its unprocessed form with better performance.
+
+A user should explore the algorithm capabilities and limitations and input data features and choose a suitable algorithm based on these observations.
