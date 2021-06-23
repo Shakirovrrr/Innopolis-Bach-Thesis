@@ -72,9 +72,9 @@ AssetDatabase.CreateAsset(data, filename);
 
 Unity requires each LOD to be a separate game object that corresponds to a parent game object. From the other perspective, the main game object has several supplementary game objects that correspond to different levels of detail. The LOD Group component manages these LOD game objects. [citation here]. Each chunk has its own LOD group that manages chunk detail levels based on the distance to the viewer.
 
-The table below provides an example of LOD settings:
+Example LOD settings are provided in the \autoref{tab:impl:lod-settings}.
 
-\begin{table}[h]
+\begin{table}[ht]
     \centering
     \begin{tabular}{l|l}
     Distance (abstract engine units) & LOD (stride) \\ \hline
@@ -85,6 +85,7 @@ The table below provides an example of LOD settings:
     \end{tabular}
     
     \caption{LOD distances and their corresponding levels.}
+    \label{tab:impl:lod-settings}
 \end{table}
 
 The shown settings helped us efficiently utilize the computational resources and significantly improve the performance. The Results chapter shows the detailed performance comparison and results.
