@@ -24,7 +24,7 @@ In terms of the Innopolis Simulator project, the chunk is a space bounded by the
 
 As a part of this project, we developed an algorithm for splitting the data into chunks. At the start, the algorithm computes the number of chunks in three dimensions using the \autoref{eqn:n_chunks}. It uses the predefined chunk size and the boundaries of the point cloud object.
 
-The number of chunks for an axis $\alpha$ is computed as follows:
+The number of chunks for an axis $\alpha$ is computed as follows ($BBox$ stands for boundnig box):
 
 \begin{equation}
 \label{eqn:n_chunks}

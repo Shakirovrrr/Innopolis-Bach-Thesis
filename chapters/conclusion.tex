@@ -1,0 +1,20 @@
+\chapter{Conclusion}
+\label{chap:conclusion}
+
+In this work, we have presented two methods for accelerating point cloud rendering: LOD generation, which drops the detail on far distances, and Mesh creation which reduces the memory consumption and bandwidth by converting the point cloud to the specific data structure. Both methods demonstrate a significant performance boost.
+
+We have obtained excellent results demonstrating that LOD generation can show up to 6.5x performance improvement and Mesh creation demonstrates up to 18.2x performance boost. These results emphasize the importance of optimizing the input data before visualizing it.
+
+However, some limitations should be considered. First, the LOD method might not be applicable for detailed point cloud exploration. Second, the Mesh creation method discards the detail under floating objects if a scene contains ones. Third, these methods should be applied before the run time as these are the preprocessing methods. Despite limitations, we believe our work can help users improve their productivity and reduce hardware costs.
+
+Our methods could be implemented in automotive simulators, 3D model explorers, and they can be integrated into the point cloud processing pipelines within large applications and production software.
+
+\section{Future work}
+
+As mentioned above, the proposed methods have limitations. However, some of these limitations appeared in the implementation stage, and they can be fixed in future work.
+
+The gaps on chunk borders produced by Mesh creation might be eliminated by applying a chunk stitching algorithm. We plan to implement chunk stitching in the nearest future before releasing the product.
+
+The data preprocessing might be integrated as a parallel operation that executes alongside the main application as the user interacts with other functionality.
+
+Our implementation also has several minor drawbacks. We believe that they can be fixed without applying heavy effort. 
