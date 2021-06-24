@@ -36,7 +36,7 @@ As mentioned above, PCAP file contains the recorded packet stream from the lidar
 
 This step collects the data stream into the single point cloud, which represents the whole captured area. The resulting point cloud is stored in LAS format.
 
-LAS is an open file format for storing 3D point cloud data developed by the American Society for Photogrammetry and Remote Sensing \cite{LasR15}. Unlike PCAP, the LAS format stores the points of the cloud as integer number triplets.
+LAS is an open file format for storing 3D point cloud data developed by the American Society for Photogrammetry and Remote Sensing \cite{LasR15}. Unlike PCAP, the LAS format stores the points of the cloud as double floating-point numbers.
 
 We use the VeloView software for converting the PCAP captured stream into LAS files.
 
