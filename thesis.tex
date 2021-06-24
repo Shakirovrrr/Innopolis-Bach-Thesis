@@ -24,7 +24,7 @@
 
 
 \usepackage[english]{babel}
-\usepackage[backend=biber,style=ieee,autocite=inline,citestyle=authoryear,maxcitenames=1,mincitenames=1]{biblatex}
+\usepackage[backend=biber,style=ieee,autocite=inline,citestyle=authoryear,uniquename=init,giveninits=true]{biblatex}
 \bibliography{ref.bib}
 \DefineBibliographyStrings{english}{%
   bibliography = {References},}
@@ -135,12 +135,13 @@
 \tableofcontents
 \listoftables
 \listoffigures
-
+\listofalgorithms
+\lstlistoflistings
 
 \newpage
-% \include{chapters/abstract}
+\include{chapters/abstract}
 % Depend on above part
-\setcounter{page}{6}
+\setcounter{page}{11}
 \include{chapters/introduction}
 \include{chapters/literature-review}
 \include{chapters/methodology}

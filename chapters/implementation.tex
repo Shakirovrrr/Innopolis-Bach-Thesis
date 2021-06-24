@@ -11,24 +11,24 @@ The Innopolis Simulator project introduced several development and business cons
 
 \subsection{Unity Platform}
 
-Unity Platform is a platform for creating and running 3D content [citation here].  We use it for developing an application that visualizes the scanned locations on client devices.
+Unity Platform is a platform for creating and running 3D content \cite{UnityAbout}.  We use it for developing an application that visualizes the scanned locations on client devices.
 
 There are two main reasons for using an existing graphics engine:
 
 \begin{itemize}
-    \item \textit{Platform-agnostic development.} Unity claims to support a wide range of devices and platforms, including desktop and mobile devices [citation here]. This aspect is essential as the primary project targets mobile devices for on-the-road usage [citation here].
+    \item \textit{Platform-agnostic development.} Unity claims to support a wide range of devices and platforms, including desktop and mobile devices \cite{UnityMultiplatform}. This aspect is essential as the primary project targets mobile devices for on-the-road usage.
     
     \item \textit{Lower development costs.} Unity provides the functionality for visualization and scripting, which would require deep research or a team of highly skilled specialists to implement that functionality on our own.
 \end{itemize}
 
-Unity engine uses .NET runtime and C\# programming language for scripting API [citation here].
+Unity engine uses .NET runtime and C\# programming language for scripting API \cite{UnityManScripts}.
 
 For implementing the point cloud visualization module, we use Unity 2020.2.
 
 
 \section{Data Preprocessing}
 
-Vehicle hardware records the lidar data in PCAP format. PCAP is an open network traffic capturing system that uses its own “.pcap” file format [citation here]. The lidar controller software receives the data in network packets and captures the incoming stream into a PCAP file. Lidar controller uses a specific VLP-16 PCAP structure that stores the lidar laser firing responses, firing time, and capturing coordinates [citation here].
+Vehicle hardware records the lidar data in PCAP format. PCAP is an open network traffic capturing system that uses its own “.pcap” file format \cite{PcapSpec}. The lidar controller software receives the data in network packets and captures the incoming stream into a PCAP file. Lidar controller uses a specific VLP-16 PCAP structure that stores the lidar laser firing responses, firing time, and capturing coordinates \cite{Vlp16PcapSpec}.
 
 \subsection{Converting to LAS format}
 
@@ -36,7 +36,7 @@ As mentioned above, PCAP file contains the recorded packet stream from the lidar
 
 This step collects the data stream into the single point cloud, which represents the whole captured area. The resulting point cloud is stored in LAS format.
 
-LAS is an open file format for storing 3D point cloud data developed by the American Society for Photogrammetry and Remote Sensing [citation here]. Unlike PCAP, the LAS format stores the points of the cloud as integer number triplets.
+LAS is an open file format for storing 3D point cloud data developed by the American Society for Photogrammetry and Remote Sensing \cite{LasR15}. Unlike PCAP, the LAS format stores the points of the cloud as integer number triplets.
 
 We use the VeloView software for converting the PCAP captured stream into LAS files.
 
@@ -46,7 +46,7 @@ As this project uses the Unity engine as a base, it is essential to have the abi
 
 We use the LASZip.net library for reading LAS files in the C\# environment.
 
-We created the scripted importer [citation here] to instruct Unity about LAS file loading, thus, further importing routines can be done automatically by Unity both in the editor and run time.
+We created the scripted importer \cite{UnityManScriptedImporters} to instruct Unity about LAS file loading, thus, further importing routines can be done automatically by Unity both in the editor and run time.
 
 
 \section{Method 1: Generating LODs}
@@ -55,13 +55,13 @@ The \autoref{chap:methodology} describes this method in detail in  \autoref{sec:
 
 \subsection{Storing different LODs in an asset database}
 
-Unity engine supports storing and loading resources using the asset system [citation here]. Thus, it helps developers distribute application resources in a natively supported format by the Unity engine.
+Unity engine supports storing and loading resources using the asset system \cite{UnityManAssetWorkflow}. Thus, it helps developers distribute application resources in a natively supported format by the Unity engine.
 
-In Unity, each LOD should have its corresponding game object [citation here]. To systematically store generated point clouds with different LODs, we used the asset database API that helps to organize the stored resource library.
+In Unity, each LOD should have its corresponding game object \cite{UnityManLod}. To systematically store generated point clouds with different LODs, we used the asset database API that helps to organize the stored resource library.
 
 In a single point cloud object, the system creates a different asset for each chunk and each level of chunk detail. Thus, the total number of assets made is $N_{assets}=N_{chunks}\times N_{LODs}$.
 
-The project utilizes the AssetDatabase API [citation here], provided by Unity. First, the algorithm creates a folder for storing the database. Next, as the chunk is generated with requested LODs, the corresponding assets are created.
+The project utilizes the AssetDatabase API \cite{UnityManAssetDb}, provided by Unity. First, the algorithm creates a folder for storing the database. Next, as the chunk is generated with requested LODs, the corresponding assets are created.
 
 \begin{lstlisting}[language={[Sharp]C}, caption=Asset database API usage example.]
 AssetDatabase.CreateFolder(directorypath, name);
@@ -70,7 +70,7 @@ AssetDatabase.CreateAsset(data, filename);
 
 \subsection{Applying LODs}
 
-Unity requires each LOD to be a separate game object that corresponds to a parent game object. From the other perspective, the main game object has several supplementary game objects that correspond to different levels of detail. The LOD Group component manages these LOD game objects. [citation here]. Each chunk has its own LOD group that manages chunk detail levels based on the distance to the viewer.
+Unity requires each LOD to be a separate game object that corresponds to a parent game object. From the other perspective, the main game object has several supplementary game objects that correspond to different levels of detail. The LOD Group component manages these LOD game objects \cite{UnityManLodGroup}. Each chunk has its own LOD group that manages chunk detail levels based on the distance to the viewer.
 
 Example LOD settings are provided in the \autoref{tab:impl:lod-settings}.
 
@@ -111,6 +111,6 @@ The system creates a list of triangles. It will contain the vertex indices that 
 
 \lstinputlisting[language={[Sharp]C}, caption=Generating triangles.]{code/generate-triangles.cs}
 
-After the triangle list has been filled, we create the mesh object. The Mesh type represents a mesh in the Unity engine [citation here]. It requires triangles and vertices. Optionally, some enhancements can be added, like texture, material, or shaders.
+After the triangle list has been filled, we create the mesh object. The Mesh type represents a mesh in the Unity engine \cite{UnityScriptingMesh}. It requires triangles and vertices. Optionally, some enhancements can be added, like texture, material, or shaders.
 
 \lstinputlisting[language={[Sharp]C}, caption=Mesh creation example.]{code/create-mesh.cs}
