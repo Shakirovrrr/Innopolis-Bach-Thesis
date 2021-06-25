@@ -35,7 +35,6 @@ The chunk grid has the size of $N_{chunks}^X \times N_{chunks}^Y \times N_{chunk
 
 After that, the algorithm iterates over all points and computes the exact chunk index they correspond to, based on their global position.
 
-
 The chunk index for a point with position $pos$ on an axis $\alpha$ is computed as shown in formula \ref{eqn:point_index} using the bounding box ($BBox$ coordinates):
 
 \begin{equation}
@@ -283,4 +282,3 @@ The first loop traverses over all chunk points. Thus, its complexity can be eval
 The second loop traverses over the vertex grid, which has $length \times length$ cells. It means that its complexity can be evaluated as $\mathcal{O}(n_2)$ (where $n_2$ is the number of cells in a grid), assuming that other operations have constant complexity.
 
 $$\mathcal{O}(n_1) + \mathcal{O}(n_2) = \mathcal{O}(n)$$
-
